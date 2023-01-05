@@ -105,7 +105,7 @@ class App(tk.Tk):
         self.startButton = ttk.Button(self.frame, text='Start', command=self.start)
         self.startButton.grid(row=1)
 
-        self.progressFrame = ttk.Frame(self.frame, width=500)
+        self.progressFrame = ttk.Frame(self, width=500)
         self.progress = {
             'bar': ttk.Progressbar(
                 self.progressFrame,
@@ -122,7 +122,7 @@ class App(tk.Tk):
 
         self.frame.grid_rowconfigure(2, weight=1)
 
-        self.progressFrame.grid(row=3)
+        self.progressFrame.pack(side='bottom', fill='x')
 
     def start(self):
         def setUIState(state='disabled'):
