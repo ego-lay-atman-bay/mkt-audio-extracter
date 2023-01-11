@@ -53,6 +53,8 @@ class App(tk.Tk):
             else:
                 path = filedialog.askopenfilename(**kwargs)
 
+            if path in ['', None]:
+                return
             entry.delete(0, 'end')
             entry.insert(0, path)
 
@@ -160,6 +162,8 @@ class App(tk.Tk):
             os.mkdir(wavpath)
         except:
             pass
+        
+        decompiledFiles = os.listdir(f'{self.config["decompressedNabe"]}/b')
 
         for r in range(1, len(self.catalog)):
             row = self.catalog[r]
@@ -177,7 +181,7 @@ class App(tk.Tk):
 
             self.progress['label'].config(text=filename)
             self.progress['bar']['value'] = r - 1
-            print(path)
+            # print(path)
 
             self.update()
 
@@ -194,8 +198,48 @@ class App(tk.Tk):
                     shutil.copytree(decompiledSource, f'{wavpath}/{os.path.splitext(filename)[0]}')
                 except:
                     pass
+                
+                try:
+                    basePath = path.split('/')[1]
+                    decompiledFiles.remove(basePath)
+                    print(basePath)
+                except:
+                    pass
 
             # print(row[3])
+            
+        
+        self.progress['bar']['max'] = len(decompiledFiles)
+        
+        progress = 0
+        
+        print(decompiledFiles)
+        
+        # input('continue:')
+        
+        for path in decompiledFiles:
+            progress += 1
+            self.progress['label'].config(text=path)
+            self.progress['bar']['value'] = progress
+            self.update()
+            
+            decompiledSource = f'{self.config["decompressedNabe"]}/b/{path}'
+            destination = f'{self.config["output"]}/UNKNOWN/{path}'
+            try:
+                os.makedirs(os.path.dirname(decompiledSource), exist_ok=True)
+            except:
+                pass
+            try:
+                os.makedirs(os.path.dirname(destination), exist_ok=True)
+            except:
+                pass
+            
+            try:
+                shutil.copytree(decompiledSource, destination)
+            except:
+                pass
+            
+        self.progress['label'].config(text='Done!')
 
     def getCatalog(self):
         try:
